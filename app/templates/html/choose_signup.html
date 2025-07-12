@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5 text-center"id="Choose">
+    <h2 class="mb-4">Choose type of account</h2>
+    
+    <div class="d-grid gap-3 col-6 mx-auto" >
+       <a href="{{ url_for('auth_routes.signup_user') }}" class="btn btn-outline-primary btn-lg">User</a>
+<a href="{{ url_for('auth_routes.signup_owner') }}" class="btn btn-outline-primary btn-lg">Owner</a>
+    </div>
+</div>
+{% endblock %}

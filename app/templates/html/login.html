@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 400px; background-color: rgba(105, 105, 105, 0.53);" id="logsign">
+    <h2 class="text-center mb-4">Login</h2>
+
+    <form method="POST" action="{{ url_for('auth_routes.login_action') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", id="email") }}
+            {% if form.email.errors %}
+                <div class="text-danger small">{{ form.email.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            <div class="input-group">
+                {{ form.password(class="form-control", id="password") }}
+                <span class="input-group-text" onclick="togglePassword('password')">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                    <i class="bi bi-eye"></i>
+                </button></span>
+            </div>
+            {% if form.password.errors %}
+                <div class="text-danger small">{{ form.password.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-check mb-3">
+            {{ form.remember(class="form-check-input", id="remember") }}
+            {{ form.remember.label(class="form-check-label") }}
+        </div>
+
+        <div class="d-grid mb-3">
+            {{ form.submit(class="btn btn-primary", id="submit-login") }}
+        </div>
+
+        <div class="text-center">
+            <p>Don't have an account? 
+                <a href="{{ url_for('auth_routes.choose_signup') }}">Sign up</a>
+            </p>
+        </div>
+    </form>
+</div>
+
+<script>
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
+
+  togglePassword.addEventListener("click", function () {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+
+    this.innerHTML = type === "password"
+      ? '<i class="bi bi-eye"></i>'
+      : '<i class="bi bi-eye-slash"></i>';
+  });
+</script>
+{% endblock %}

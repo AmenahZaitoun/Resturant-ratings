@@ -1,0 +1,6 @@
+Flask
+Flask-Session
+Flask-WTF
+WTForms
+email-validator
+flask_sqlalchemy

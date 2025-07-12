@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="row g-0">
+            <!-- Image Section -->
+            <div class="col-md-5">
+                <img src="{{ url_for('static', filename=facility.image) }}"
+                     alt="{{ facility.facility_name }}"
+                     class="img-fluid rounded-start"
+                     style="height: 100%; width: 100%; object-fit: cover;">
+            </div>
+
+            <!-- Info Section -->
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h3 class="card-title">{{ facility.facility_name }}</h3>
+                    <p class="card-text"><strong>Type:</strong> {{ facility.facility_type }}</p>
+                    <p class="card-text"><strong>Category:</strong> {{ facility.facility_category }}</p>
+                    <p class="card-text"><strong>Rating:</strong>
+                        {% if facility.rating %}
+                            {{ facility.rating }} ★
+                        {% else %}
+                            No rating yet
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary mt-3">← Back to Home</a>
+                   {% if session.get("role") == "user" %}
+    <a href="{{ url_for('ratings_routes.show_rating_form', facility_name=facility.facility_name) }}" class="btn btn-primary mt-3">
+        Add Rating
+    </a>
+{% else %}
+    <a href="{{ url_for('auth_routes.login_form') }}" class="btn btn-warning mt-3">
+        Login to Rate
+    </a>
+{% endif %}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ratings Section -->
+    <div class="mt-5">
+        <h4>Previous Ratings:</h4>
+        {% if ratings %}
+            {% for r in ratings %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">By: {{ r.user_name }}</h6>
+                        <p><strong>Service Quality:</strong> {{ r.service_quality }} / 5</p>
+                        <p><strong>Food Quality:</strong> {{ r.food_quality }} / 5</p>
+                        <p><strong>Mood:</strong> {{ r.mood }} / 5</p>
+                        {% if r.comment %}
+                            <p><strong>Comment:</strong> {{ r.comment }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No ratings yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

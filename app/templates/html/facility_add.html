@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <h2>Add New Facility</h2>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.facility_name.label }}<br>
+            {{ form.facility_name(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.facility_type.label }}<br>
+            {{ form.facility_type(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.facility_category.label }}<br>
+            {{ form.facility_category(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.image.label }}<br>
+            {{ form.image(class="form-control") }}
+        </div>
+
+        <div class="form-group mt-5">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

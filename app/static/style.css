@@ -1,0 +1,47 @@
+.custom-yellow{
+    background-color: #fff6d7;
+}
+.nav-link:hover{
+    transform: scale(1.1);
+    transition: transform 0.3s;
+
+}
+#FP{
+    color: black;
+}
+body{
+    background-color: #f0e8cff5;
+}
+.card{
+    margin-top: 55px;
+    background-color: #e4e2de8f;
+}
+
+.btn{
+    background-color: rgba(108, 104, 97, 0.756);
+    color: whitesmoke;
+}
+.btn:hover{
+  transform: scale(1.1);
+    transition: transform 0.3s;
+}
+#logsign{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+#submit-login{
+    background-color: rgb(9, 9, 87);
+}
+#togglePassword{
+    background-color: rgb(230, 241, 248);
+    color: black;
+    margin-top: 10px;
+
+}
+#Choose{
+    margin-top: 50px;
+    margin-bottom: 130px;
+}
+h2{
+    margin-top: 50px;
+}

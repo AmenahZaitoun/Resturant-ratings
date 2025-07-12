@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid px-4" style="min-height: 100vh;">
+
+    {% if message %}
+        <div class="alert alert-warning mt-3">{{ message }}</div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3 mb-4" style="margin-left: -100px;">
+            <div class="card p-3 shadow-sm">
+                <h5 class="mb-3">Filter Facilities</h5>
+                <form method="GET" action="{{ url_for('home') }}">
+                    <div class="mb-3">
+                        <label for="search" class="form-label">Search by Name</label>
+                        <input type="text" id="search" name="search" class="form-control"
+                               value="{{ request.args.get('search', '') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="type" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="restaurant" {% if request.args.get('type') == 'restaurant' %}selected{% endif %}>Restaurant</option>
+                            <option value="cafe" {% if request.args.get('type') == 'cafe' %}selected{% endif %}>Cafe</option>
+                            <option value="hotel" {% if request.args.get('type') == 'hotel' %}selected{% endif %}>Hotel</option>
+                            <option value="park" {% if request.args.get('type') == 'park' %}selected{% endif %}>Park</option>
+                            <option value="cinema" {% if request.args.get('type') == 'cinema' %}selected{% endif %}>Cinema</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="luxury" {% if request.args.get('category') == 'luxury' %}selected{% endif %}>Luxury</option>
+                            <option value="budget" {% if request.args.get('category') == 'budget' %}selected{% endif %}>Budget</option>
+                            <option value="family" {% if request.args.get('category') == 'family' %}selected{% endif %}>Family</option>
+                            <option value="child_friendly" {% if request.args.get('category') == 'child_friendly' %}selected{% endif %}>Child-friendly</option>
+                            <option value="youth_friendly" {% if request.args.get('category') == 'youth_friendly' %}selected{% endif %}>Youth-friendly</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <select name="rating" class="form-select">
+                            <option value="">Any Rating</option>
+                            {% for r in range(5, 0, -1) %}
+                                <option value="{{ r }}" {% if request.args.get('rating') == r|string %}selected{% endif %}>{{ r }} Star{{ 's' if r > 1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Facility Cards -->
+        <div class="col-md-9" style="width: 900px;">
+            {% if facilities %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5" >
+                    {% for facility in facilities %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                <div style="height: 200px; overflow: hidden;">
+                                    <img src="{{ url_for('static', filename=facility.image) }}"
+                                         alt="{{ facility.facility_name }}"
+                                         class="card-img-top"
+                                         style="height: 100%; width: 100%; object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ facility.facility_name }}</h5>
+                                    <p class="card-text mb-1"><strong>Type:</strong> {{ facility.facility_type }}</p>
+                                    <p class="card-text mb-1"><strong>Category:</strong> {{ facility.facility_category }}</p>
+                                    <p class="card-text"><strong>Rating:</strong> {{ facility.rating }}</p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a href="{{ url_for('facility_details', facility_name=facility.facility_name) }}" class="btn btn-primary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No facilities found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
