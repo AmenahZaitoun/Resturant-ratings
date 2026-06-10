@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="auth-shell" style="max-width: 780px;">
+    <div class="surface-card p-4 p-lg-5">
+        <h2 class="section-title mb-1">Edit Facility</h2>
+        <p class="muted mb-4">Update facility details to keep listing information accurate.</p>
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('owner_facility_routes.edit_facility', facility_name=facility.facility_name) }}">
+            <div class="mb-3">
+                <label class="form-label" for="facility_name">Facility Name</label>
+                <input class="form-control" id="facility_name" name="facility_name" type="text" required value="{{ facility.facility_name }}">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="facility_type">Type</label>
+                <select class="form-select" id="facility_type" name="facility_type" required>
+                    <option value="restaurant" {% if facility.facility_type == "restaurant" %}selected{% endif %}>Restaurant</option>
+                    <option value="cafe" {% if facility.facility_type == "cafe" %}selected{% endif %}>Cafe</option>
+                    <option value="hotel" {% if facility.facility_type == "hotel" %}selected{% endif %}>Hotel</option>
+                    <option value="park" {% if facility.facility_type == "park" %}selected{% endif %}>Park</option>
+                    <option value="cinema" {% if facility.facility_type == "cinema" %}selected{% endif %}>Cinema</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="facility_category">Category</label>
+                <select class="form-select" id="facility_category" name="facility_category" required>
+                    <option value="luxury" {% if facility.facility_category == "luxury" %}selected{% endif %}>Luxury</option>
+                    <option value="budget" {% if facility.facility_category == "budget" %}selected{% endif %}>Budget</option>
+                    <option value="family" {% if facility.facility_category == "family" %}selected{% endif %}>Family</option>
+                    <option value="child_friendly" {% if facility.facility_category == "child_friendly" %}selected{% endif %}>Child-friendly</option>
+                    <option value="youth_friendly" {% if facility.facility_category == "youth_friendly" %}selected{% endif %}>Youth-friendly</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">Current Image</label>
+                <img src="{{ url_for('static', filename=facility.image) }}" alt="{{ facility.facility_name }}" style="width: 180px; height: 120px; object-fit: cover; border-radius: 12px; border: 1px solid #d7e2ee;">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label" for="image">Upload New Image (optional)</label>
+                <input class="form-control" id="image" name="image" type="file" accept="image/*">
+            </div>
+
+            <hr class="my-4">
+            <h5 class="section-title mb-3">Facility Details</h5>
+
+            <div class="mb-3">
+                <label class="form-label" for="address">Address</label>
+                <input class="form-control" id="address" name="address" type="text" value="{{ info.address if info else '' }}">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="phone">Phone</label>
+                    <input class="form-control" id="phone" name="phone" type="text" value="{{ info.phone if info else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="opening_hours">Opening Hours</label>
+                    <input class="form-control" id="opening_hours" name="opening_hours" type="text" value="{{ info.opening_hours if info else '' }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="price_range">Price Range</label>
+                    <select class="form-select" id="price_range" name="price_range">
+                        <option value="" {% if not info or not info.price_range %}selected{% endif %}>Not specified</option>
+                        <option value="$" {% if info and info.price_range == '$' %}selected{% endif %}>$ Budget</option>
+                        <option value="$$" {% if info and info.price_range == '$$' %}selected{% endif %}>$$ Moderate</option>
+                        <option value="$$$" {% if info and info.price_range == '$$$' %}selected{% endif %}>$$$ Premium</option>
+                        <option value="$$$$" {% if info and info.price_range == '$$$$' %}selected{% endif %}>$$$$ Luxury</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="website">Website</label>
+                    <input class="form-control" id="website" name="website" type="text" value="{{ info.website if info else '' }}">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label" for="menu_items">Menu Items</label>
+                <textarea class="form-control" id="menu_items" name="menu_items" rows="5">{{ info.menu_items if info else '' }}</textarea>
+                <small class="muted">Write each menu item on a new line.</small>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Save Changes</button>
+                <a class="btn btn-outline-secondary" href="{{ url_for('owner_facility_routes.owner_home') }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

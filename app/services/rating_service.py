@@ -51,16 +51,15 @@ class RatingService:
         db.session.add(new_rating)
         db.session.commit()
 
-        # 📊 جلب كل التقييمات
-        all_ratings = self.rating_repo.get(facility_name)
+        # Get all ratings for this facility and compute a correct average.
+        all_ratings = self.rating_repo.get(facility.id)
         if all_ratings:
             total_avg = round(
-                sum(new_rating.service_quality + new_rating.food_quality + new_rating.mood for r in all_ratings) / (3 * len(all_ratings)), 2
+                sum(r.service_quality + r.food_quality + r.mood for r in all_ratings) / (3 * len(all_ratings)), 2
             )
         else:
             total_avg = user_avg
 
-        # ✅ تحديث تقييم المنشأة
-        self.facility_repo.update(facility_name, rating=total_avg)
+        self.facility_repo.update(facility.facility_name, rating=total_avg)
 
         return {"success": True, "new_avg": total_avg}

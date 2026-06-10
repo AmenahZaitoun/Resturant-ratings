@@ -4,3 +4,4 @@ Flask-WTF
 WTForms
 email-validator
 flask_sqlalchemy
+flask-cors

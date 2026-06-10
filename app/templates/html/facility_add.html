@@ -1,34 +1,75 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<section class="auth-shell" style="max-width: 780px;">
+    <div class="surface-card p-4 p-lg-5">
+        <h2 class="section-title mb-1">Add New Facility</h2>
+        <p class="muted mb-4">Provide clear details so users can discover your facility easily.</p>
 
-    <h2>Add New Facility</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.facility_name.label(class="form-label") }}
+                {{ form.facility_name(class="form-control") }}
+            </div>
 
-        <div class="form-group">
-            {{ form.facility_name.label }}<br>
-            {{ form.facility_name(class="form-control") }}
-        </div>
+            <div class="mb-3">
+                {{ form.facility_type.label(class="form-label") }}
+                {{ form.facility_type(class="form-select") }}
+            </div>
 
-        <div class="form-group">
-            {{ form.facility_type.label }}<br>
-            {{ form.facility_type(class="form-control") }}
-        </div>
+            <div class="mb-3">
+                {{ form.facility_category.label(class="form-label") }}
+                {{ form.facility_category(class="form-select") }}
+            </div>
 
-        <div class="form-group">
-            {{ form.facility_category.label }}<br>
-            {{ form.facility_category(class="form-control") }}
-        </div>
+            <div class="mb-4">
+                {{ form.image.label(class="form-label") }}
+                {{ form.image(class="form-control", accept="image/*") }}
+            </div>
 
-        <div class="form-group">
-            {{ form.image.label }}<br>
-            {{ form.image(class="form-control") }}
-        </div>
+            <hr class="my-4">
+            <h5 class="section-title mb-3">Facility Details (Optional)</h5>
 
-        <div class="form-group mt-5">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-    </form>
+            <div class="mb-3">
+                {{ form.address.label(class="form-label") }}
+                {{ form.address(class="form-control", placeholder="City, street, area...") }}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class="form-control", placeholder="+962...") }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.opening_hours.label(class="form-label") }}
+                    {{ form.opening_hours(class="form-control", placeholder="Mon-Sun 9:00 AM - 11:00 PM") }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.price_range.label(class="form-label") }}
+                    {{ form.price_range(class="form-select") }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.website.label(class="form-label") }}
+                    {{ form.website(class="form-control", placeholder="https://example.com") }}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                {{ form.menu_items.label(class="form-label") }}
+                {{ form.menu_items(class="form-control", rows=5, placeholder="Pizza Margherita\nBeef Burger\nCaesar Salad") }}
+                <small class="muted">Write each menu item on a new line.</small>
+            </div>
+
+            <div class="d-flex gap-2">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('owner_facility_routes.owner_home') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
 {% endblock %}

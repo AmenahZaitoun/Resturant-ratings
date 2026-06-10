@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from app.forms.registeration_form import RegistrationForm
 from app.forms.login_form import LoginForm
 from app.services.account_service import AccountService
-from app.models.role import Role
 from app.States.context import UserContext
 
 auth_routes = Blueprint("auth_routes", __name__)
@@ -55,7 +54,7 @@ def login_action():
                     "role": "owner"
                 }
                 session.modified = True
-                return redirect(url_for("owner_routes.owner_home"))
+                return redirect(url_for("owner_facility_routes.owner_home"))
 
             elif role == "user":
                 return redirect(url_for("home"))
@@ -105,3 +104,9 @@ def signup_owner():
             return render_template("html/owner_register.html", form=form, error=result.get("message"))
 
     return render_template("html/owner_register.html", form=form)
+
+
+@auth_routes.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))

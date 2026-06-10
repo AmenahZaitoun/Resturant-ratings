@@ -1,67 +1,204 @@
 {% extends "layout.html" %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg">
-        <div class="row g-0">
-            <!-- Image Section -->
-            <div class="col-md-5">
-                <img src="{{ url_for('static', filename=facility.image) }}"
-                     alt="{{ facility.facility_name }}"
-                     class="img-fluid rounded-start"
-                     style="height: 100%; width: 100%; object-fit: cover;">
+<section class="surface-card overflow-hidden mb-4">
+    <div class="row g-0">
+        <div class="col-lg-5">
+            <img src="{{ url_for('static', filename=facility.image) }}" alt="{{ facility.facility_name }}" class="w-100 h-100" style="object-fit: cover; min-height: 320px;">
+        </div>
+        <div class="col-lg-7">
+            <div class="p-4 p-lg-5">
+                <h2 class="section-title mb-2">{{ facility.facility_name }}</h2>
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <span class="feature-chip text-capitalize">{{ facility.facility_type }}</span>
+                    <span class="feature-chip text-capitalize">{{ facility.facility_category.replace('_', ' ') }}</span>
+                </div>
+
+                <div class="d-flex align-items-end gap-3 mb-1">
+                    <h3 class="mb-0">{{ summary.overall_avg if summary else 0 }}/5</h3>
+                    <p class="muted mb-1">{{ summary.review_count if summary else 0 }} review{{ '' if summary and summary.review_count == 1 else 's' }}</p>
+                </div>
+                <div class="mb-4">
+                    {% set stars = (summary.overall_avg if summary else 0)|round|int %}
+                    {% for _ in range(stars) %}<i class="bi bi-star-fill text-warning"></i>{% endfor %}
+                    {% for _ in range(5 - stars) %}<i class="bi bi-star text-warning"></i>{% endfor %}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Back to Home</a>
+                    {% if session.get("role") == "user" %}
+                    <a href="{{ url_for('ratings_routes.show_rating_form', facility_name=facility.facility_name) }}" class="btn btn-primary">Write a Review</a>
+                    <form method="POST" action="{{ url_for('favorites_routes.toggle_favorite', facility_name=facility.facility_name) }}">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            {% if is_favorite %}Saved in Favorites{% else %}Save to Favorites{% endif %}
+                        </button>
+                    </form>
+                    {% else %}
+                    <a href="{{ url_for('auth_routes.login_form') }}" class="btn btn-primary">Login to Review</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="surface-card p-4 h-100">
+            <h5 class="section-title mb-3">Rating Breakdown</h5>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Service</span>
+                    <strong>{{ summary.service_avg if summary else 0 }}/5</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ (summary.service_avg * 20) if summary else 0 }}%"></div>
+                </div>
             </div>
 
-            <!-- Info Section -->
-            <div class="col-md-7">
-                <div class="card-body">
-                    <h3 class="card-title">{{ facility.facility_name }}</h3>
-                    <p class="card-text"><strong>Type:</strong> {{ facility.facility_type }}</p>
-                    <p class="card-text"><strong>Category:</strong> {{ facility.facility_category }}</p>
-                    <p class="card-text"><strong>Rating:</strong>
-                        {% if facility.rating %}
-                            {{ facility.rating }} ★
-                        {% else %}
-                            No rating yet
-                        {% endif %}
-                    </p>
-                    <a href="{{ url_for('home') }}" class="btn btn-secondary mt-3">← Back to Home</a>
-                   {% if session.get("role") == "user" %}
-    <a href="{{ url_for('ratings_routes.show_rating_form', facility_name=facility.facility_name) }}" class="btn btn-primary mt-3">
-        Add Rating
-    </a>
-{% else %}
-    <a href="{{ url_for('auth_routes.login_form') }}" class="btn btn-warning mt-3">
-        Login to Rate
-    </a>
-{% endif %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Food</span>
+                    <strong>{{ summary.food_avg if summary else 0 }}/5</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ (summary.food_avg * 20) if summary else 0 }}%"></div>
+                </div>
+            </div>
 
-
-
+            <div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Mood</span>
+                    <strong>{{ summary.mood_avg if summary else 0 }}/5</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (summary.mood_avg * 20) if summary else 0 }}%"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Ratings Section -->
-    <div class="mt-5">
-        <h4>Previous Ratings:</h4>
-        {% if ratings %}
-            {% for r in ratings %}
-                <div class="card my-3">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">By: {{ r.user_name }}</h6>
-                        <p><strong>Service Quality:</strong> {{ r.service_quality }} / 5</p>
-                        <p><strong>Food Quality:</strong> {{ r.food_quality }} / 5</p>
-                        <p><strong>Mood:</strong> {{ r.mood }} / 5</p>
-                        {% if r.comment %}
-                            <p><strong>Comment:</strong> {{ r.comment }}</p>
+    <div class="col-lg-5">
+        <div class="surface-card p-4 h-100">
+            <h5 class="section-title mb-3">Star Distribution</h5>
+            {% for star in range(5, 0, -1) %}
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div style="width: 56px;">{{ star }} <i class="bi bi-star-fill text-warning"></i></div>
+                <div class="progress flex-grow-1" style="height: 10px;">
+                    <div class="progress-bar" role="progressbar" style="width: {{ summary.stars_distribution_percent.get(star, 0) if summary else 0 }}%"></div>
+                </div>
+                <small class="muted" style="width: 46px; text-align: right;">{{ summary.stars_distribution.get(star, 0) if summary else 0 }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="surface-card p-4 h-100">
+            <h5 class="section-title mb-3">Facility Information</h5>
+            <div class="mb-2"><strong>Address:</strong> {{ facility.info.address if facility.info and facility.info.address else "Not provided" }}</div>
+            <div class="mb-2"><strong>Phone:</strong> {{ facility.info.phone if facility.info and facility.info.phone else "Not provided" }}</div>
+            <div class="mb-2"><strong>Opening Hours:</strong> {{ facility.info.opening_hours if facility.info and facility.info.opening_hours else "Not provided" }}</div>
+            <div class="mb-2"><strong>Price Range:</strong> {{ facility.info.price_range if facility.info and facility.info.price_range else "Not provided" }}</div>
+            <div class="mb-2">
+                <strong>Website:</strong>
+                {% if facility.info and facility.info.website %}
+                <a href="{{ facility.info.website }}" target="_blank" rel="noopener noreferrer">{{ facility.info.website }}</a>
+                {% else %}
+                Not provided
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="surface-card p-4 h-100">
+            <h5 class="section-title mb-3">Menu Highlights</h5>
+            {% if facility.info and facility.info.menu_items %}
+                {% set menu_list = facility.info.menu_items.split('\n') %}
+                <ul class="mb-0">
+                    {% for item in menu_list %}
+                        {% if item.strip() %}
+                        <li>{{ item.strip() }}</li>
                         {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted mb-0">Menu not added yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section>
+    <h4 class="section-title mb-3">User Reviews</h4>
+    {% if ratings %}
+    <div class="ratings-list">
+        {% for r in ratings %}
+        <article class="surface-card p-3 p-lg-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <strong>{{ r.user_name }}</strong>
+                    <div class="mt-1">
+                        {% set review_stars = r.overall_score|round|int %}
+                        {% for _ in range(review_stars) %}<i class="bi bi-star-fill text-warning"></i>{% endfor %}
+                        {% for _ in range(5-review_stars) %}<i class="bi bi-star text-warning"></i>{% endfor %}
+                        <span class="ms-1 muted">{{ r.overall_score }}/5</span>
                     </div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-muted">No ratings yet.</p>
-        {% endif %}
+                <div class="d-flex gap-2">
+                    <span class="feature-chip">Service {{ r.service_quality }}</span>
+                    <span class="feature-chip">Food {{ r.food_quality }}</span>
+                    <span class="feature-chip">Mood {{ r.mood }}</span>
+                </div>
+            </div>
+
+            {% if r.comment %}
+            <p class="mb-2 mt-3">{{ r.comment }}</p>
+            {% endif %}
+
+            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                <span class="feature-chip"><i class="bi bi-hand-thumbs-up-fill"></i> {{ r.likes_count }}</span>
+                {% if session.get("role") == "user" %}
+                <form method="POST" action="{{ url_for('ratings_routes.toggle_rating_like', rating_id=r.id) }}">
+                    <input type="hidden" name="facility_name" value="{{ facility.facility_name }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        {% if r.id in liked_rating_ids %}Unlike{% else %}Like{% endif %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <div class="mt-3">
+                <h6 class="mb-2">Comments on this review</h6>
+                {% if r.comments %}
+                    {% for c in r.comments %}
+                    <div class="border rounded-3 p-2 mb-2 bg-white">
+                        <strong>{{ c.user_name }}</strong>
+                        <p class="mb-0 small">{{ c.comment }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="small muted mb-2">No comments yet.</p>
+                {% endif %}
+
+                {% if session.get("role") == "user" %}
+                <form method="POST" action="{{ url_for('ratings_routes.add_rating_comment', rating_id=r.id) }}">
+                    <input type="hidden" name="facility_name" value="{{ facility.facility_name }}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="comment_text" maxlength="500" placeholder="Comment on this review...">
+                        <button class="btn btn-primary" type="submit">Post</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
     </div>
-</div>
+    {% else %}
+    <div class="empty-state">No reviews yet. Be the first to review this place.</div>
+    {% endif %}
+</section>
 {% endblock %}

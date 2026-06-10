@@ -9,12 +9,15 @@ class OwnerRepository(Repository):
         db.session.commit()
         return owner
     
-    def update(self, Owner):
+    def update(self, owner):
         db.session.commit()
-        return Owner
+        return owner
     
-    def get(self, username):
-        return Owner.query.get(username)
+    def get(self, owner_id):
+        return db.session.get(Owner, owner_id)
+
+    def get_by_username(self, username):
+        return db.session.query(Owner).filter_by(username=username).first()
     def get_role(self, email):
         owner = self.get_by_email(email)
         if owner:
@@ -26,9 +29,9 @@ class OwnerRepository(Repository):
     def get_all(self):
         return Owner.query.all()
     
-    def delete(self, username):
-        user = self.get(username)
-        if user:
-            db.session.delete(user)
+    def delete(self, owner_id):
+        owner = self.get(owner_id)
+        if owner:
+            db.session.delete(owner)
             db.session.commit()
 

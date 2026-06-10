@@ -1,7 +1,8 @@
 # app/forms/facility_form.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Length
+from flask_wtf.file import FileAllowed, FileField, FileRequired
+from wtforms import StringField, SelectField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Length, Optional, URL
 
 class FacilityForm(FlaskForm):
     facility_name = StringField("Facility Name", validators=[
@@ -24,8 +25,22 @@ class FacilityForm(FlaskForm):
         ("youth_friendly", "Youth-friendly")
     ], validators=[DataRequired()])
 
-    image = StringField("Image Filename", validators=[
-        DataRequired(), Length(min=3, max=100)
+    image = FileField("Facility Image", validators=[
+        FileRequired(),
+        FileAllowed(["jpg", "jpeg", "png", "gif", "webp", "avif"], "Images only (jpg, jpeg, png, gif, webp, avif).")
     ])
+
+    address = StringField("Address", validators=[Optional(), Length(max=255)])
+    phone = StringField("Phone", validators=[Optional(), Length(max=40)])
+    opening_hours = StringField("Opening Hours", validators=[Optional(), Length(max=255)])
+    price_range = SelectField("Price Range", choices=[
+        ("", "Not specified"),
+        ("$", "$ Budget"),
+        ("$$", "$$ Moderate"),
+        ("$$$", "$$$ Premium"),
+        ("$$$$", "$$$$ Luxury"),
+    ], validators=[Optional()])
+    website = StringField("Website", validators=[Optional(), URL(require_tld=False), Length(max=255)])
+    menu_items = TextAreaField("Menu Items", validators=[Optional(), Length(max=2000)])
 
     submit = SubmitField("Create Facility")

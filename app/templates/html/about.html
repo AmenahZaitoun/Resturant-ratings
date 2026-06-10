@@ -1,4 +1,29 @@
-{%extends "layout.html"%}
-{%block content%}
-<h1>this is about page</h1>
-{%endblock%}
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="surface-card p-4 p-lg-5">
+    <h1 class="section-title mb-3">About Restorate</h1>
+    <p class="muted mb-4">Restorate is a practical review platform that helps people choose facilities with confidence and helps owners improve service quality through transparent feedback.</p>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="surface-card p-3 h-100">
+                <h6 class="section-title">Discover</h6>
+                <p class="mb-0 muted">Explore facilities by type, category, and community ratings.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-3 h-100">
+                <h6 class="section-title">Rate</h6>
+                <p class="mb-0 muted">Provide structured ratings for service quality, food quality, and mood.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-3 h-100">
+                <h6 class="section-title">Manage</h6>
+                <p class="mb-0 muted">Owners can add and maintain facilities from a focused dashboard.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

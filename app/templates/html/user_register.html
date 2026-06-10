@@ -1,93 +1,59 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Sign up as user</h2>
-  <form method="POST" novalidate>
-    {{ form.hidden_tag() }}
-    
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        {{ form.fname.label(class="form-label") }}
-        {{ form.fname(class="form-control") }}
-        {% for error in form.fname.errors %}
-          <small class="text-danger">{{ error }}</small>
-        {% endfor %}
-      </div>
-      <div class="col-md-6 mb-3">
-        {{ form.lname.label(class="form-label") }}
-        {{ form.lname(class="form-control") }}
-        {% for error in form.lname.errors %}
-          <small class="text-danger">{{ error }}</small>
-        {% endfor %}
-      </div>
+<section class="auth-shell" style="max-width: 760px;">
+    <div class="surface-card">
+        <h2 class="section-title mb-1">Sign up as User</h2>
+        <p class="muted mb-4">Create your profile to rate facilities and leave feedback.</p>
+
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.fname.label(class="form-label") }}
+                    {{ form.fname(class="form-control") }}
+                    {% for error in form.fname.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.lname.label(class="form-label") }}
+                    {{ form.lname(class="form-control") }}
+                    {% for error in form.lname.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+                {% for error in form.username.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+                {% for error in form.password.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.confirm_password.label(class="form-label") }}
+                {{ form.confirm_password(class="form-control") }}
+                {% for error in form.confirm_password.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <div class="d-grid">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
     </div>
-
-    <div class="mb-3">
-      {{ form.username.label(class="form-label") }}
-      {{ form.username(class="form-control") }}
-      {% for error in form.username.errors %}
-        <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-
-    <div class="mb-3">
-      {{ form.email.label(class="form-label") }}
-      {{ form.email(class="form-control") }}
-      {% for error in form.email.errors %}
-        <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-
-    <div class="mb-3 position-relative">
-      {{ form.password.label(class="form-label") }}
-      <div class="input-group">
-        {{ form.password(class="form-control", id="password") }}
-        <span class="input-group-text" onclick="togglePassword('password')"> <button class="btn btn-outline-secondary" 
-            type="button" id="togglePassword"> <i class="bi bi-eye"></i>
-    </button>
-        </span>
-      </div>
-      {% for error in form.password.errors %}
-        <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-
-    <div class="mb-3 position-relative">
-      {{ form.confirm_password.label(class="form-label") }}
-      <div class="input-group">
-        {{ form.confirm_password(class="form-control", id="confirm_password") }}
-        <span class="input-group-text" onclick="togglePassword('password')"> <button class="btn btn-outline-secondary" 
-            type="button" id="togglePassword"> <i class="bi bi-eye"></i>
-    </button>
-        </span>
-      </div>
-      {% for error in form.confirm_password.errors %}
-        <small class="text-danger">{{ error }}</small>
-      {% endfor %}
-    </div>
-
-    <div class="text-center">
-      {{ form.submit(class="btn btn-primary") }}
-    </div>
-    {% if error %}
-  <div class="alert alert-danger text-center">{{ error }}</div>
-{% endif %}
-
-  </form>
-</div>
-
-<script>
-  const togglePassword = document.getElementById("togglePassword");
-  const passwordInput = document.getElementById("password");
-
-  togglePassword.addEventListener("click", function () {
-    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-    passwordInput.setAttribute("type", type);
-
-    this.innerHTML = type === "password"
-      ? '<i class="bi bi-eye"></i>'
-      : '<i class="bi bi-eye-slash"></i>';
-  });
-</script>
+</section>
 {% endblock %}

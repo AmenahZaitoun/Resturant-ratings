@@ -13,8 +13,11 @@ class UserRepository(Repository):
         db.session.commit()
         return user
 
-    def get(self, username):
-        return User.query.get(username)
+    def get(self, user_id):
+        return db.session.get(User, user_id)
+
+    def get_by_username(self, username):
+        return db.session.query(User).filter_by(username=username).first()
 
     def get_role(self, email):
         user = self.get_by_email(email)
@@ -28,8 +31,8 @@ class UserRepository(Repository):
     def get_by_email(self, email):
         return db.session.query(User).filter_by(email=email.strip().lower()).first()
 
-    def delete(self, username):
-        user = self.get(username)
+    def delete(self, user_id):
+        user = self.get(user_id)
         if user:
             db.session.delete(user)
             db.session.commit()

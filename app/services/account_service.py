@@ -1,4 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.exc import IntegrityError
 from app.repositories.user_repository import UserRepository
 from app.repositories.owner_repository import OwnerRepository
 from app.models.role import Role
@@ -17,41 +18,61 @@ class AccountService:
         return Role.query.filter_by(name=role_name).first()
 
     def user_register(self, fname, lname, username, email, password):
+        normalized_email = email.strip().lower()
+        if self.user_repo.get_by_email(normalized_email) or self.owner_repo.get_by_email(normalized_email):
+            return {"success": False, "message": "Email is already registered."}
+        if self.user_repo.get_by_username(username) or self.owner_repo.get_by_username(username):
+            return {"success": False, "message": "Username is already taken."}
+
         hashed_password = generate_password_hash(password)
 
         # Get existing role from DB
         role = self.get_role_by_name("user")
         if not role:
-            raise ValueError("Role 'user' not found in database.")
+            return {"success": False, "message": "Role 'user' is missing. Initialize roles first."}
 
         user = User(
             fname=fname,
             lname=lname,
             username=username,
-            email=email.strip().lower(),
+            email=normalized_email,
             password=hashed_password,
             role=role  # <-- ربط مباشر
         )
-        self.user_repo.create(user)
+        try:
+            self.user_repo.create(user)
+        except IntegrityError:
+            db.session.rollback()
+            return {"success": False, "message": "Invalid registration data or duplicate fields."}
         return {"success": True, "account": user}
 
     def owner_register(self, fname, lname, username, email, password):
+        normalized_email = email.strip().lower()
+        if self.user_repo.get_by_email(normalized_email) or self.owner_repo.get_by_email(normalized_email):
+            return {"success": False, "message": "Email is already registered."}
+        if self.user_repo.get_by_username(username) or self.owner_repo.get_by_username(username):
+            return {"success": False, "message": "Username is already taken."}
+
         hashed_password = generate_password_hash(password)
 
         role = self.get_role_by_name("owner")
         if not role:
-            raise ValueError("Role 'owner' not found in database.")
+            return {"success": False, "message": "Role 'owner' is missing. Initialize roles first."}
 
         owner = Owner(
             fname=fname,
             lname=lname,
             username=username,
-            email=email.strip().lower(),
+            email=normalized_email,
             password=hashed_password,
             role=role
         )
 
-        self.owner_repo.create(owner)
+        try:
+            self.owner_repo.create(owner)
+        except IntegrityError:
+            db.session.rollback()
+            return {"success": False, "message": "Invalid registration data or duplicate fields."}
         return {"success": True, "account": owner}
 
     def login(self, email, password):
